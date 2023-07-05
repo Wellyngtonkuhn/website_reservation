@@ -1,3 +1,9 @@
+import SearchForm from "../components/home/SearchForm";
+
 export default async function Home() {
-  return <main>kadkamd</main>;
+  return (
+    <main>
+      <SearchForm />
+    </main>
+  );
 }

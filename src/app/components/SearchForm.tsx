@@ -47,7 +47,7 @@ export default function SearchForm() {
             <input
               type="text"
               placeholder="Onde você quer ir?"
-              className="w-full text-sm p-2 outline-none border border-l-gray-300 font-normal text-primaryDarker rounded-lg placeholder-black placeholder-opacity-20"
+              className="w-full text-sm p-2 outline-none border border-gray-300 font-normal text-primaryDarker rounded-lg placeholder-black placeholder-opacity-20"
               {...register("location")}
             />
             {errors.location && (
@@ -72,7 +72,7 @@ export default function SearchForm() {
                     enableTabLoop={false}
                     wrapperClassName="w-full"
                     placeholderText="Primeira data"
-                    className="w-full text-sm p-2 outline-none border border-l-gray-300 font-normal text-primaryDarker rounded-lg placeholder-black placeholder-opacity-20"
+                    className="w-full text-sm p-2 outline-none border border-gray-300 font-normal text-primaryDarker rounded-lg placeholder-black placeholder-opacity-20"
                   />
                 )}
               />

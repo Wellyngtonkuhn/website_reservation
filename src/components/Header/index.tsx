@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 import { AiOutlineMenu } from "react-icons/ai";
+import Link from "next/link";
 
 export default function Header() {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
@@ -22,7 +23,9 @@ export default function Header() {
     <div className="w-full shadow-md">
       <div className="container mx-auto py-5  h-24 px-5 flex justify-between items-center">
         <div className="relative h-[32px] w-[182px]">
-          <Image src="/logo.png" alt="fwsweek logo" fill />
+          <Link href="/">
+            <Image src="/logo.png" alt="fwsweek logo" fill />
+          </Link>
         </div>
 
         {status === "unauthenticated" && (

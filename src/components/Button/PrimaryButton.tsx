@@ -8,7 +8,7 @@ export default function PrimaryButton({ children }: ButtonProps) {
   return (
     <button
       type="submit"
-      className="bg-primary text-white w-full rounded-lg p-2 text-sm font-semibold "
+      className="w-full bg-primary text-white rounded-lg p-2 text-sm font-semibold "
     >
       {children}
     </button>

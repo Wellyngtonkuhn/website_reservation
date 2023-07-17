@@ -36,9 +36,9 @@ export default function SearchForm() {
     console.log(data);
   };
   return (
-    <div className="w-full bg-search-background bg-cover bg-center bg-no-repeat">
+    <div className="w-full bg-search-background bg-cover bg-center bg-no-repeat pt-5">
       <div className="container mx-auto px-5 ">
-        <h2 className="text-xl font-semibold text-center text-primaryDarker pt-5">
+        <h2 className="text-xl font-semibold text-center text-primaryDarker">
           Encontre sua próxima <span className="text-primary">viagem!</span>
         </h2>
 

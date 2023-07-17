@@ -4,12 +4,12 @@ import SearchForm from "./components/SearchForm";
 
 export default async function Home() {
   return (
-    <main>
+    <section>
       <SearchForm />
 
       <QuickSearch />
 
       <Recommended />
-    </main>
+    </section>
   );
 }

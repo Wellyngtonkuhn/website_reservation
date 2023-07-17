@@ -17,7 +17,7 @@ export default async function TripDetail({ params }: { params: { id: string } })
   const trip = await getTrypById(params.id);
   console.log(trip);
   return (
-    <main className="w-full">
+    <section className="w-full">
       {/* Hero */}
       <section className="flex flex-col">
         <div className="w-full h-52 relative">
@@ -99,6 +99,6 @@ export default async function TripDetail({ params }: { params: { id: string } })
           <SecondaryButton>Ver no Google Maps</SecondaryButton>
         </div>
       </section>
-    </main>
+    </section>
   );
 }

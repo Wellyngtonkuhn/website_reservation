@@ -24,7 +24,7 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full shadow-md fixed top-0">
+    <header className="w-full bg-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto py-5  h-24 px-5 flex justify-between items-center">
         <div className="relative h-[32px] w-[182px]">
           <Link href="/">
@@ -55,7 +55,7 @@ export default function Header() {
                 Home
               </Link>
               <Link
-                href="my-trips"
+                href="/my-trips"
                 onClick={handleCloseMenu}
                 className="text-primary font-semibold text-sm"
               >

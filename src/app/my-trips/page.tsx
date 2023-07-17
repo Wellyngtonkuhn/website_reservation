@@ -4,9 +4,9 @@ import ReactCountryFlag from "react-country-flag";
 
 export default function MyTrips() {
   return (
-    <main className="w-full">
-      <section className="container mx-auto px-5">
-        <h3 className="text-primaryDarker text-xl font-semibold my-5  ">
+    <section className="w-full pt-5">
+      <div className="container mx-auto px-5">
+        <h3 className="text-primaryDarker text-xl font-semibold mb-5  ">
           Minhas viagens
         </h3>
 
@@ -59,7 +59,7 @@ export default function MyTrips() {
           </div>
           <CancelButton>Cancelar</CancelButton>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
   );
 }

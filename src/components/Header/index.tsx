@@ -3,7 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
 
-import { AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineMenu, AiOutlineUser } from "react-icons/ai";
 import Link from "next/link";
 
 export default function Header() {
@@ -19,8 +19,12 @@ export default function Header() {
 
   const handleOpenMenu = () => setMenuIsOpen(!menuIsOpen);
 
+  const handleCloseMenu = () => {
+    setMenuIsOpen(false);
+  };
+
   return (
-    <div className="w-full shadow-md">
+    <header className="w-full shadow-md fixed top-0">
       <div className="container mx-auto py-5  h-24 px-5 flex justify-between items-center">
         <div className="relative h-[32px] w-[182px]">
           <Link href="/">
@@ -28,19 +32,9 @@ export default function Header() {
           </Link>
         </div>
 
-        {status === "unauthenticated" && (
-          <button className="text-primary text-sm font-semibold" onClick={handleLogIn}>
-            Login
-          </button>
-        )}
-
-        {status === "authenticated" && data.user && (
-          <div className="flex items-center gap-3 p-2 px-3 border-grayLighter border border-solid rounded-full">
-            <AiOutlineMenu
-              size={16}
-              onClick={handleOpenMenu}
-              className="cursor-pointer"
-            />
+        <div className="flex items-center gap-3 p-2 px-3 border-grayLighter border border-solid rounded-full">
+          <AiOutlineMenu size={16} onClick={handleOpenMenu} className="cursor-pointer" />
+          {status === "authenticated" && data.user ? (
             <Image
               src={data.user.image!}
               alt={data.user.name!}
@@ -48,19 +42,44 @@ export default function Header() {
               height={35}
               className="rounded-full shadow-md"
             />
-            {menuIsOpen && (
-              <div className="">
+          ) : (
+            <AiOutlineUser />
+          )}
+          {menuIsOpen && (
+            <div className="flex flex-col items-center gap-y-4 fixed top-20 right-5 bg-white shadow-lg p-2 rounded-xl">
+              <Link
+                href="/"
+                onClick={handleCloseMenu}
+                className="text-primary font-semibold text-sm"
+              >
+                Home
+              </Link>
+              <Link
+                href="my-trips"
+                onClick={handleCloseMenu}
+                className="text-primary font-semibold text-sm"
+              >
+                Minhas viagens
+              </Link>
+              {status === "authenticated" ? (
                 <button
                   onClick={handleLogOut}
                   className="text-primary font-semibold text-sm"
                 >
                   Logout
                 </button>
-              </div>
-            )}
-          </div>
-        )}
+              ) : (
+                <button
+                  onClick={handleLogIn}
+                  className="text-primary font-semibold text-sm"
+                >
+                  Login
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </header>
   );
 }

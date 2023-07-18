@@ -1,5 +1,6 @@
 "use client";
 import { Controller, useForm, SubmitHandler } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import DatePicker, { registerLocale } from "react-datepicker";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -10,7 +11,7 @@ import ptBR from "date-fns/locale/pt-BR";
 registerLocale("pt-BR", ptBR);
 
 const searchSchema = yup.object({
-  location: yup.string().required("Campo obrigatório*"),
+  text: yup.string().required("Campo obrigatório*"),
   startDate: yup.date().required("Campo obrigatório*"),
   budget: yup
     .number()
@@ -22,6 +23,7 @@ const searchSchema = yup.object({
 type FormProps = yup.InferType<typeof searchSchema>;
 
 export default function SearchForm() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -33,7 +35,11 @@ export default function SearchForm() {
   });
 
   const handleSearch: SubmitHandler<FormProps> = (data) => {
-    console.log(data);
+    router.push(
+      `/trips/search?text=${
+        data?.text
+      }&startDate=${data?.startDate?.toISOString()}&budget=${data?.budget}`
+    );
   };
   return (
     <div className="w-full bg-search-background bg-cover bg-center bg-no-repeat pt-5">
@@ -48,11 +54,11 @@ export default function SearchForm() {
               type="text"
               placeholder="Onde você quer ir?"
               className="w-full text-sm p-2 outline-none border border-gray-300 font-normal text-primaryDarker rounded-lg placeholder-black placeholder-opacity-20"
-              {...register("location")}
+              {...register("text")}
             />
-            {errors.location && (
+            {errors.text && (
               <p className="text-xs mt-1 text-red-500 font-medium">
-                {errors.location.message}
+                {errors.text.message}
               </p>
             )}
           </div>

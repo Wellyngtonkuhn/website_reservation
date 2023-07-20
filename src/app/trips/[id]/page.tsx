@@ -15,7 +15,7 @@ const getTrypById = async (id: string) => {
 
 export default async function TripDetail({ params }: { params: { id: string } }) {
   const trip = await getTrypById(params.id);
-  console.log(trip);
+
   return (
     <section className="w-full">
       {/* Hero */}
@@ -50,7 +50,12 @@ export default async function TripDetail({ params }: { params: { id: string } })
       <section className="container mx-auto px-5">
         {/* Form Search */}
         <div className="w-full mt-5 mb-10">
-          <ReservationForm />
+          <ReservationForm
+            tripId={trip?.id as string}
+            pricePerDay={trip?.pricePerDay as any}
+            tripStartDate={trip?.startDate as any}
+            tripEndDate={trip?.endDate as any}
+          />
         </div>
 
         {/* About */}

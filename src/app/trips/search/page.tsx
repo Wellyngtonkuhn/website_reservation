@@ -8,20 +8,16 @@ import Link from "next/link";
 export default function Search() {
   const searchParams = useSearchParams();
 
+  const text = searchParams.get("text");
+  const startDate = searchParams.get("startDate");
+  const budget = searchParams.get("budget");
+
   const { data, isLoading } = useQuery(
-    [
-      "trip-search",
-      `text=${searchParams.get("text") ?? ""}&startDate=${searchParams.get(
-        "startDate"
-      )}&budget=${searchParams.get("budget")}`,
-    ],
+    ["trip-search", `text=${text}&startDate=${startDate}&budget=${budget}`],
     async () => {
       const response = await fetch(
-        `/api/trips/search?text=${
-          searchParams.get("text") ?? ""
-        }&startDate=${searchParams.get("startDate")}&budget=${searchParams.get("budget")}`
+        `/api/trips/search?text=${text}&startDate=${startDate}&budget=${budget}`
       );
-
       return response.json();
     },
     {
@@ -37,7 +33,7 @@ export default function Search() {
             Hospedagens encontradas
           </h3>
           <p className="text-base text-grayPrimary font-medium mb-5">
-            {data?.data.length > 0
+            {data?.data.length > 0 || isLoading
               ? "Listamos os melhores locais para você!"
               : "Não encontramos nada nos seus parâmetros! =("}
           </p>

@@ -13,3 +13,7 @@ _ O Stripe retornará o sessionID e totalPrice.
 - "/api/payment/confirmation" irá criar a reserva e redirecionar para a página de sucesso.
 
   \_ Não deu Certo
+
+  ## Todo
+
+[] Arumar o fetch do QuickSearch component da home.

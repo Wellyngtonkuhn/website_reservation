@@ -15,25 +15,37 @@ export default function QuickSearch() {
       <div className="w-full mt-5">
         <ul className="flex items-center justify-between">
           <li>
-            <Link href="" className="flex flex-col items-center justify-center">
+            <Link
+              href="/trips/search?text=hotel"
+              className="flex flex-col items-center justify-center"
+            >
               <Image src="/hotel.svg" alt="Icone de Hotel" width={35} height={35} />
               <p className="text-sm font-normal text-grayPrimary">Hotel</p>
             </Link>
           </li>
           <li>
-            <Link href="" className="flex flex-col items-center justify-center">
+            <Link
+              href="/trips/search?text=fazenda"
+              className="flex flex-col items-center justify-center"
+            >
               <Image src="/farm.svg" alt="Icone de Hotel" width={35} height={35} />
               <p className="text-sm font-normal text-grayPrimary">Fazenda</p>
             </Link>
           </li>
           <li>
-            <Link href="" className="flex flex-col items-center justify-center">
+            <Link
+              href="/trips/search?text=chalé"
+              className="flex flex-col items-center justify-center"
+            >
               <Image src="/cabin.svg" alt="Icone de Hotel" width={35} height={32} />
               <p className="text-sm font-normal text-grayPrimary">Chalé</p>
             </Link>
           </li>
           <li>
-            <Link href="" className="flex flex-col items-center justify-center">
+            <Link
+              href="/trips/search?text=pousada"
+              className="flex flex-col items-center justify-center"
+            >
               <Image src="/yurt.svg" alt="Icone de Hotel" width={35} height={35} />
               <p className="text-sm font-normal text-grayPrimary">Pousada</p>
             </Link>

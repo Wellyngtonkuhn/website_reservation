@@ -1,4 +1,6 @@
 "use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Controller, useForm, SubmitHandler } from "react-hook-form";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -6,7 +8,9 @@ import * as yup from "yup";
 
 import "react-datepicker/dist/react-datepicker.css";
 import ptBR from "date-fns/locale/pt-BR";
+import { differenceInDays } from "date-fns";
 import Button from "@/src/components/Button/PrimaryButton";
+import { ResChechReservation, ReservationFormType } from "./types";
 
 registerLocale("pt-BR", ptBR);
 
@@ -17,25 +21,67 @@ const searchSchema = yup.object({
     .number()
     .required("Campo obrigatório*")
     .positive("Valor precisa ser maior que 0")
+    .max(5, "Número máxido de hospedes é 5")
     .typeError("Insira um número válido"),
 });
 
 type FormType = yup.InferType<typeof searchSchema>;
 
-export default function ReservationForm() {
+export default function ReservationForm({
+  tripId,
+  pricePerDay,
+  tripStartDate,
+  tripEndDate,
+}: ReservationFormType) {
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm<FormType>({
     resolver: yupResolver(searchSchema),
     mode: "all",
   });
 
-  const handleReservation: SubmitHandler<FormType> = (data) => {
-    console.log(data);
+  const handleReservation: SubmitHandler<FormType> = async (data) => {
+    const response = await fetch("/api/trips/check", {
+      method: "POST",
+      body: Buffer.from(
+        JSON.stringify({
+          startDate: data.startDate,
+          endDate: data.endDate,
+          tripId,
+        })
+      ),
+    });
+
+    const res: ResChechReservation = await response.json();
+
+    if (res?.error?.code === "TRIP_ALREADY_RESERVED") {
+      return setErrorMessage("Esta data já está reservada.");
+    }
+
+    if (res?.error?.code === "INVALID_START_DATE") {
+      return setErrorMessage("Data inválida.");
+    }
+
+    if (res?.error?.code === "INVALID_END_DATE") {
+      return setErrorMessage("Data inválida.");
+    }
+
+    return router.push(
+      `/trips/${tripId}/confirmation?startDate=${data.startDate?.toISOString()}&endDate=${data.endDate?.toISOString()}&guests=${
+        data.guests
+      }`
+    );
   };
+
+  const startDate = watch("startDate");
+  const endDate = watch("endDate");
 
   return (
     <form onSubmit={handleSubmit(handleReservation)} className="flex flex-col gap-2">
@@ -49,8 +95,8 @@ export default function ReservationForm() {
                 dateFormat="dd/MM/yyyy"
                 locale="pt-BR"
                 selected={field.value}
-                onChange={field.onChange}
-                minDate={new Date()}
+                onChange={field.onChange as any}
+                minDate={tripStartDate > new Date() ? tripStartDate : new Date()}
                 enableTabLoop={false}
                 wrapperClassName="w-full"
                 placeholderText="Data de ínicio"
@@ -74,8 +120,9 @@ export default function ReservationForm() {
                 dateFormat="dd/MM/yyyy"
                 locale="pt-BR"
                 selected={field.value}
-                onChange={field.onChange}
-                minDate={new Date()}
+                onChange={field.onChange as any}
+                minDate={startDate ?? tripStartDate}
+                maxDate={tripEndDate as any}
                 enableTabLoop={false}
                 wrapperClassName="w-full"
                 placeholderText="Data final"
@@ -100,8 +147,13 @@ export default function ReservationForm() {
         <p className="text-xs mt-1 text-red-500 font-medium">{errors.guests.message}</p>
       )}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-primaryDarker font-medium">Total (7 noites)</p>
-        <p className="text-sm text-primaryDarker font-medium">R$2.660</p>
+        <p className="text-sm text-primaryDarker font-medium">
+          Total ({startDate && endDate && differenceInDays(endDate, startDate)} noites)
+        </p>
+        <p className="text-sm text-primaryDarker font-medium">
+          R$
+          {startDate && endDate ? differenceInDays(endDate, startDate) * pricePerDay : 0}
+        </p>
       </div>
       <Button>Reservar agora</Button>
     </form>

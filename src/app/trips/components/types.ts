@@ -1,6 +1,6 @@
 import { Trip } from "@prisma/client";
 
-export type ResChechReservation = {
+export type DataReservation = {
   sucess?: boolean;
   status?: number;
   totalPrice?: number;

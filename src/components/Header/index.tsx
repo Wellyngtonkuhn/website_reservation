@@ -1,16 +1,16 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { useSession, signIn, signOut } from "next-auth/react";
+import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 import { AiOutlineMenu, AiOutlineUser } from "react-icons/ai";
-import Link from "next/link";
 
 export default function Header() {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const { data, status } = useSession();
-
-  const handleLogIn = () => signIn();
+  const route = useRouter();
 
   const handleLogOut = () => {
     setMenuIsOpen(false);
@@ -69,12 +69,13 @@ export default function Header() {
                   Logout
                 </button>
               ) : (
-                <button
-                  onClick={handleLogIn}
+                <Link
+                  href="/login"
                   className="text-primary font-semibold text-sm"
+                  onClick={handleCloseMenu}
                 >
                   Login
-                </button>
+                </Link>
               )}
             </div>
           )}

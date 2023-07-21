@@ -10,7 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import ptBR from "date-fns/locale/pt-BR";
 import { differenceInDays } from "date-fns";
 import Button from "@/src/components/Button/PrimaryButton";
-import { ResChechReservation, ReservationFormType } from "./types";
+import { DataReservation, ReservationFormType } from "./types";
 
 registerLocale("pt-BR", ptBR);
 
@@ -59,7 +59,7 @@ export default function ReservationForm({
       ),
     });
 
-    const res: ResChechReservation = await response.json();
+    const res: DataReservation = await response.json();
 
     if (res?.error?.code === "TRIP_ALREADY_RESERVED") {
       return setErrorMessage("Esta data já está reservada.");

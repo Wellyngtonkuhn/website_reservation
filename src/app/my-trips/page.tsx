@@ -1,8 +1,31 @@
-import CancelButton from "@/src/components/Button/CancelButton";
+"use client";
 import Image from "next/image";
+import { TripReservationPayload } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import CancelButton from "@/src/components/Button/CancelButton";
 import ReactCountryFlag from "react-country-flag";
 
 export default function MyTrips() {
+  const session = useSession();
+  const userId = (session.data?.user as any)?.id as string;
+
+  const { data, isLoading } = useQuery<TripReservationPayload>(
+    ["my-trips", userId],
+    async () => {
+      const response = await fetch(`/api/trips/user/${userId}/reservations`);
+
+      const res = await response.json();
+
+      return res;
+    },
+    {
+      staleTime: 1000 * 60 * 5, // cinco minutos até refazer uma nova requisição
+    }
+  );
+
+  console.log(data);
+
   return (
     <section className="w-full pt-5">
       <div className="container mx-auto px-5">
@@ -14,7 +37,7 @@ export default function MyTrips() {
           <div className="flex items-center gap-5">
             <Image
               src="/mapMobile.png"
-              alt=""
+              alt="mlamdlasdmlm"
               width={124}
               height={102}
               className="rounded-xl"

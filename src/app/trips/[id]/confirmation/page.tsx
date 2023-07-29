@@ -111,7 +111,10 @@ export default function TripConfirmation({ params }: { params: { id: string } })
             <div className="flex items-center justify-between">
               <p className="text-sm text-primaryDarker font-normal">Total</p>
               <p className="text-sm text-primaryDarker font-semibold">
-                R${data?.totalPrice}
+              {(data?.totalPrice)?.toLocaleString('pt-BR',{
+                style: 'currency',
+                currency: 'BRL'
+              })}
               </p>
             </div>
           </div>

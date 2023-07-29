@@ -151,8 +151,12 @@ export default function ReservationForm({
           Total ({startDate && endDate && differenceInDays(endDate, startDate)} noites)
         </p>
         <p className="text-sm text-primaryDarker font-medium">
-          R$
-          {startDate && endDate ? differenceInDays(endDate, startDate) * pricePerDay : 0}
+          {(startDate && endDate ? differenceInDays(endDate, startDate) * pricePerDay : 0).toLocaleString(
+            'pt-BR',{
+              style: 'currency',
+              currency: 'BRL'
+            }
+          )}
         </p>
       </div>
       <Button>Reservar agora</Button>

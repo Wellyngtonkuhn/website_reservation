@@ -1,8 +1,10 @@
 "use client";
 import Image from "next/image";
-import { TripReservationPayload } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import CancelButton from "@/src/components/Button/CancelButton";
 import ReactCountryFlag from "react-country-flag";
 
@@ -10,7 +12,11 @@ export default function MyTrips() {
   const session = useSession();
   const userId = (session.data?.user as any)?.id as string;
 
-  const { data, isLoading } = useQuery<TripReservationPayload>(
+  const { data, isLoading } = useQuery<
+    Prisma.TripReservationGetPayload<{
+      include: { trip: true };
+    }>[]
+  >(
     ["my-trips", userId],
     async () => {
       const response = await fetch(`/api/trips/user/${userId}/reservations`);
@@ -24,7 +30,19 @@ export default function MyTrips() {
     }
   );
 
-  console.log(data);
+  const handleDeleteReservation = async(id: string) => {
+    if(!id) return
+
+    try {
+      const response = await fetch(`/api/trips/reservations/${id}`,{
+        method: 'DELETE'
+      })
+
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <section className="w-full pt-5">
@@ -33,55 +51,87 @@ export default function MyTrips() {
           Minhas viagens
         </h3>
 
-        <div className="w-full border border-grayLighter rounded-xl shadow-md p-5 mb-5">
-          <div className="flex items-center gap-5">
-            <Image
-              src="/mapMobile.png"
-              alt="mlamdlasdmlm"
-              width={124}
-              height={102}
-              className="rounded-xl"
-            />
-            <div>
-              <h3 className="text-base text-primaryDarker font-semibold">
-                Hotel Maravista
-              </h3>
-              <p className="flex items-center gap-1 text-xs text-grayPrimary font-medium underline">
-                <ReactCountryFlag countryCode={"BR" as string} svg />
-                Rio de Janeiro
-              </p>
-            </div>
-          </div>
+        {isLoading && <h1>Loading...</h1>}
 
-          <div className="w-full border border-b[1px] border-grayLighter my-5" />
+        {data?.length! > 0 &&
+          data?.map((reservation) => (
+            <div
+              className="w-full border border-grayLighter rounded-xl shadow-md p-5 mb-5"
+              key={reservation.id}
+            >
+              <div className="flex items-center gap-5">
+                <Image
+                  src={reservation.trip.coverImage}
+                  alt={reservation.trip.name}
+                  width={124}
+                  height={102}
+                  className="rounded-xl"
+                />
+                <div>
+                  <h3 className="text-base text-primaryDarker font-semibold">
+                    {reservation.trip.name}
+                  </h3>
+                  <p className="flex items-center gap-1 text-xs text-grayPrimary font-medium underline">
+                    <ReactCountryFlag
+                      countryCode={reservation.trip.countryCode as string}
+                      svg
+                    />
+                    {reservation.trip.location}
+                  </p>
+                </div>
+              </div>
 
-          <div>
-            <h3 className="text-sm text-primaryDarker font-semibold mb-5">
-              Sobre a viagem
-            </h3>
-            <div className="flex flex-col gap-2  mb-5">
-              <p className="text-sm text-primaryDarker font-normal">Data</p>
-              <p className="text-sm text-primaryDarker font-normal">17-27 de julho.</p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="text-sm text-primaryDarker font-normal">Hóspedes</p>
-              <p className="text-sm text-primaryDarker font-normal">8 hópedes</p>
-            </div>
-          </div>
+              <div className="w-full border border-b[1px] border-grayLighter my-5" />
 
-          <div className="w-full border border-b[1px] border-grayLighter my-5" />
+              <div>
+                <h3 className="text-sm text-primaryDarker font-semibold mb-5">
+                  Sobre a viagem
+                </h3>
+                <div className="flex flex-col gap-2  mb-5">
+                  <p className="text-sm text-primaryDarker font-normal">Data</p>
 
-          <div className="mb-5">
-            <h3 className="text-sm text-primaryDarker font-semibold mb-4">
-              Informações do pagamento
-            </h3>
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-primaryDarker font-normal">Total</p>
-              <p className="text-sm text-primaryDarker font-semibold">R$3.390</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-sm text-primaryDarker font-normal">
+                      {format(new Date(reservation.startDate), "dd 'de' MMMM", {
+                        locale: ptBR,
+                      })}
+                    </p>
+                    <p className="text-sm text-primaryDarker font-normal">-</p>
+                    <p className="text-sm text-primaryDarker font-normal">
+                      {format(new Date(reservation.endDate), "dd 'de' MMMM", {
+                        locale: ptBR,
+                      })}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <p className="text-sm text-primaryDarker font-normal">Hóspedes</p>
+                  <p className="text-sm text-primaryDarker font-normal">
+                    {reservation.guests} hópedes
+                  </p>
+                </div>
+              </div>
+
+              <div className="w-full border border-b[1px] border-grayLighter my-5" />
+
+              <div className="mb-5">
+                <h3 className="text-sm text-primaryDarker font-semibold mb-4">
+                  Informações do pagamento
+                </h3>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-primaryDarker font-normal">Total</p>
+                  <p className="text-sm text-primaryDarker font-semibold">
+                    {Number(reservation.totalPaid).toLocaleString("pt", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </p>
+                </div>
+              </div>
+              <CancelButton onClick={()=> handleDeleteReservation(reservation.id)}>Cancelar</CancelButton>
             </div>
-          </div>
-          <CancelButton>Cancelar</CancelButton>
-        </div>
+          ))}
       </div>
     </section>
   );

@@ -18,4 +18,5 @@ _ O Stripe retornará o sessionID e totalPrice.
 
 [] Arumar o fetch do QuickSearch component da home.
 [] Fazer as mutations do React query com cache para os eventos.
-[] Fazer o comonent de Loading
+[] Fazer o component de Loading.
+[] Fazer a tratativas de erros das requests para o usuário.

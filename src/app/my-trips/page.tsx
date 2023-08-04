@@ -1,16 +1,19 @@
 "use client";
 import Image from "next/image";
 import { Prisma } from "@prisma/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import CancelButton from "@/src/components/Button/CancelButton";
 import ReactCountryFlag from "react-country-flag";
+import { queryClient } from "@/src/provider";
 
 export default function MyTrips() {
-  const session = useSession();
+  const session = useSession(); 
   const userId = (session.data?.user as any)?.id as string;
+
+
 
   const { data, isLoading } = useQuery<
     Prisma.TripReservationGetPayload<{
@@ -30,19 +33,24 @@ export default function MyTrips() {
     }
   );
 
-  const handleDeleteReservation = async(id: string) => {
-    if(!id) return
+  const cacheData = queryClient.getQueryData<Prisma.TripReservationGetPayload<{
+    include: { trip: true };
+  }>[]>( ["my-trips", userId])
 
-    try {
-      const response = await fetch(`/api/trips/reservations/${id}`,{
-        method: 'DELETE'
+  const handleMutationDelete = useMutation({
+    mutationFn: (id: string) => fetch(`/api/trips/reservations/${id}`,{
+      method: 'DELETE'
+    }) ,
+    onSuccess(data, variables, context) {
+      const newCacheData = cacheData?.filter(reservation => {
+        return reservation.id !== variables
       })
-
-      console.log(response)
-    } catch (error) {
+      return queryClient.setQueryData(["my-trips", userId], newCacheData)
+    },
+    onError(error) {
       console.log(error)
-    }
-  }
+    },
+  })
 
   return (
     <section className="w-full pt-5">
@@ -129,8 +137,9 @@ export default function MyTrips() {
                   </p>
                 </div>
               </div>
-              <CancelButton onClick={()=> handleDeleteReservation(reservation.id)}>Cancelar</CancelButton>
+              <CancelButton onClick={()=> handleMutationDelete.mutate(reservation.id)}>{handleMutationDelete.isLoading ? 'Cancelando...' : 'Cancelar'}</CancelButton>
             </div>
+         
           ))}
       </div>
     </section>
